@@ -17,9 +17,14 @@ export default function PrivacyPage() {
           Google을 포함한 제3자 광고 사업자는 쿠키를 사용하여 사용자의 이전 방문 기록을 바탕으로 광고를 게재할 수 있습니다.
           사용자는 Google 광고 설정 페이지에서 개인 맞춤 광고를 관리하거나 거부할 수 있으며, 브라우저의 쿠키 차단 기능을 사용할 수 있습니다.
         </p>
-        <p className="mt-3">
-          Google 광고 쿠키 및 맞춤 광고에 대한 자세한 내용은 Google 광고 정책과 개인정보 보호 안내를 참고해 주세요.
-        </p>
+        <ul className="mt-3 list-disc pl-5 text-sm leading-7 text-slate-700">
+          <li>
+            Google 광고 설정: <a className="font-bold text-bara-blue" href="https://adssettings.google.com/" target="_blank" rel="noreferrer">https://adssettings.google.com/</a>
+          </li>
+          <li>
+            Google 광고 개인정보 안내: <a className="font-bold text-bara-blue" href="https://policies.google.com/technologies/ads?hl=ko" target="_blank" rel="noreferrer">https://policies.google.com/technologies/ads</a>
+          </li>
+        </ul>
         <h2 className="mt-6 text-xl font-black">외부 서비스</h2>
         <p>
           사이트는 행사 정보 제공을 위해 공공데이터 API, 검색엔진, 분석 도구 등 외부 서비스를 활용할 수 있습니다.

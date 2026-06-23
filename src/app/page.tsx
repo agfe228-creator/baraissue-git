@@ -1,10 +1,13 @@
 import { AdBox } from "@/components/AdBox";
 import { EventCard } from "@/components/EventCard";
+import { OfficialGuideSection } from "@/components/OfficialGuideSection";
 import { SearchBox } from "@/components/SearchBox";
 import { categories, quickKeywords, regions, regionToSlug, statIcons } from "@/lib/constants";
 import { isVerifiedEvent, sortForPublicDisplay } from "@/lib/events";
 import { getRuntimeEvents } from "@/lib/runtimeEvents";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const events = await getRuntimeEvents();
@@ -14,9 +17,9 @@ export default async function HomePage() {
   const featuredEvents = displayEvents.filter((event) => event.status !== "종료").slice(0, 8);
   const latestEvents = displayEvents.slice(0, 8);
   const stats = [
-    ["공식 출처 행사", verifiedEvents.length],
-    ["진행중 행사", displayEvents.filter((event) => event.status === "진행중").length],
-    ["예정 행사", displayEvents.filter((event) => event.status === "예정").length]
+    ["공식 출처", verifiedEvents.length ? `${verifiedEvents.length.toLocaleString()}개` : "확인중"],
+    ["진행중", displayEvents.filter((event) => event.status === "진행중").length ? `${displayEvents.filter((event) => event.status === "진행중").length.toLocaleString()}개` : "확인중"],
+    ["예정 행사", displayEvents.filter((event) => event.status === "예정").length ? `${displayEvents.filter((event) => event.status === "예정").length.toLocaleString()}개` : "확인중"]
   ];
 
   return (
@@ -54,7 +57,7 @@ export default async function HomePage() {
                   </span>
                   <div>
                     <p className="text-xs font-bold text-slate-500">{label}</p>
-                    <p className="text-xl font-black">{Number(value).toLocaleString()}개</p>
+                    <p className="text-xl font-black">{value}</p>
                   </div>
                 </div>
               );
@@ -112,21 +115,7 @@ export default async function HomePage() {
         ) : null}
       </section>
 
-      <section className="container-shell py-8">
-        <SectionTitle title="행사 방문 전 확인 가이드" href="/about" />
-        <div className="mt-4 grid gap-4 md:grid-cols-3">
-          {[
-            ["일정 확인", "축제와 전시회는 날씨, 현장 상황, 주최 측 사정에 따라 운영 시간이 바뀔 수 있습니다. 방문 전 공식 안내와 문의처를 한 번 더 확인하는 것이 좋습니다."],
-            ["교통·주차 확인", "주말과 공휴일에는 행사장 주변 도로가 혼잡할 수 있습니다. 가까운 대중교통, 임시 주차장, 셔틀버스 운영 여부를 미리 확인해 주세요."],
-            ["요금·예약 확인", "무료 행사라도 일부 체험 프로그램은 현장 결제나 사전 예약이 필요할 수 있습니다. 예매 마감, 현장 접수, 취소 규정을 함께 확인하면 좋습니다."]
-          ].map(([title, body]) => (
-            <article key={title} className="soft-card rounded-xl p-5">
-              <h2 className="text-lg font-black text-bara-text">{title}</h2>
-              <p className="mt-3 text-sm leading-6 text-slate-700">{body}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      <OfficialGuideSection />
 
       <section className="container-shell py-8">
         <SectionTitle title="지역별 바로가기" href="/region/seoul" />

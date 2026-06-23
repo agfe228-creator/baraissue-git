@@ -93,8 +93,8 @@ export function ListPageClient({
           </div>
         ) : (
           <div className="mt-8 rounded-xl border border-dashed border-bara-line bg-slate-50 p-10 text-center">
-            <p className="font-black">조건에 맞는 행사가 없습니다.</p>
-            <p className="mt-2 text-sm text-bara-muted">필터를 줄이거나 다른 검색어로 다시 확인해 주세요.</p>
+            <p className="font-black">현재 조건에 맞는 공식 출처 행사를 정리 중입니다.</p>
+            <p className="mt-2 text-sm text-bara-muted">공개 자료가 확인되는 행사부터 순서대로 반영합니다.</p>
           </div>
         )}
 

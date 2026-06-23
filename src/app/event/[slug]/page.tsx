@@ -76,6 +76,11 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
         <Link href="/">홈</Link> 〉 <Link href={`/${event.category === "축제" ? "festival" : event.category === "박람회" ? "fair" : event.category === "전시회" ? "exhibition" : "performance"}`}>{event.category}</Link> 〉 {event.title}
       </p>
       <section className="soft-card mt-4 rounded-xl p-5 md:p-7">
+        {event.image ? (
+          <div className="mb-6 overflow-hidden rounded-xl bg-slate-100">
+            <img src={event.image} alt={`${event.title} 행사 이미지`} className="h-64 w-full object-cover md:h-80" />
+          </div>
+        ) : null}
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <div className="mb-3 flex flex-wrap gap-2">

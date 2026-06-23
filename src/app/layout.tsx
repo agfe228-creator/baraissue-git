@@ -6,6 +6,8 @@ import { SITE_NAME, SITE_URL } from "@/lib/constants";
 import type { ReactNode } from "react";
 import "./globals.css";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {

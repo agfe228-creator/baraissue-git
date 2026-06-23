@@ -19,29 +19,9 @@ export async function getRuntimeEvents(): Promise<EventItem[]> {
     return cachedEvents.items;
   }
 
-  if (process.env.TOUR_API_SERVICE_KEY) {
-    const providerEvents = await getProviderEvents();
-    if (providerEvents.length && providerEvents !== events) {
-      cachedEvents = { expiresAt: Date.now() + cacheMs, items: providerEvents };
-      return providerEvents;
-    }
-  }
-
-  try {
-    const { PrismaClient } = await import("@prisma/client");
-    const prisma = new PrismaClient();
-    const dbEvents = await prisma.event.findMany({ orderBy: { createdAt: "desc" } });
-    await prisma.$disconnect();
-
-    if (!dbEvents.length) return getProviderEvents();
-    const normalized = dbEvents.map((event) => normalizeDbEvent(event as DbEvent));
-    cachedEvents = { expiresAt: Date.now() + cacheMs, items: normalized };
-    return normalized;
-  } catch {
-    const fallback = await getProviderEvents();
-    cachedEvents = { expiresAt: Date.now() + cacheMs, items: fallback };
-    return fallback;
-  }
+  const providerEvents = await getProviderEvents();
+  cachedEvents = { expiresAt: Date.now() + cacheMs, items: providerEvents };
+  return providerEvents;
 }
 
 export async function getRuntimeEvent(slug: string): Promise<EventItem | undefined> {

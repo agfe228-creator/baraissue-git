@@ -104,6 +104,6 @@ export function categoryByKey(key: string) {
   return categories.find((category) => category.key === key) ?? categories[0];
 }
 
-export const quickKeywords = ["서울 축제", "부산 전시회", "무료 행사", "가족 나들이", "이번 주 행사"];
+export const quickKeywords = ["서울 축제", "인천 축제", "무료 행사", "가족 나들이", "2026 축제"];
 
 export const statIcons = [CalendarDays, MapPin, Ticket];

@@ -104,7 +104,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
           ) : null}
           {event.organizer ? <Info icon={<UserRound size={16} />} label="주최" value={event.organizer} /> : null}
           <Info icon={<Phone size={16} />} label="문의" value={event.contact} />
-          <Info icon={<Database size={16} />} label="정보 출처" value={event.slug.startsWith("tourapi-") ? "한국관광공사 TourAPI 및 공개 행사 정보" : "축제바라 편집 데이터"} />
+          <Info icon={<Database size={16} />} label="정보 출처" value={<SourceValue event={event} />} />
           <Info icon={<Clock3 size={16} />} label="업데이트" value={event.updatedAt.replaceAll("-", ".")} />
         </div>
         <p className="mt-4 rounded-lg bg-blue-50 px-4 py-3 text-sm leading-6 text-slate-700">
@@ -127,6 +127,21 @@ function Info({ icon, label, value }: { icon: ReactNode; label: string; value: R
       <span className="font-semibold text-bara-text">{value}</span>
     </div>
   );
+}
+
+function SourceValue({ event }: { event: EventItem }) {
+  if (event.slug.startsWith("tourapi-")) {
+    return (
+      <span>
+        한국관광공사 TourAPI 및 공개 행사 정보{" "}
+        <a href="https://www.data.go.kr/data/15101578/openapi.do" target="_blank" rel="noreferrer" className="text-bara-blue">
+          출처 보기
+        </a>
+      </span>
+    );
+  }
+
+  return <span>축제바라 편집 데이터</span>;
 }
 
 function getRuntimeRelatedEvents(event: EventItem, allEvents: EventItem[]) {

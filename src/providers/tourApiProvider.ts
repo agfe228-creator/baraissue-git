@@ -44,6 +44,13 @@ const regionNames = [
   "제주"
 ];
 
+const categoryGuide: Record<EventItem["category"], string> = {
+  축제: "계절 프로그램, 현장 체험, 먹거리와 공연을 함께 확인하면 방문 동선을 세우기 쉽습니다. 야외 행사는 날씨와 혼잡도에 따라 운영 방식이 달라질 수 있어 당일 공지를 함께 확인하는 편이 좋습니다.",
+  박람회: "사전 등록 여부, 입장 마감 시간, 참가 기업과 부스 위치를 미리 살피면 관람 시간을 효율적으로 쓸 수 있습니다. 상담이나 체험이 필요한 경우 관심 구역을 먼저 정해 두는 것이 좋습니다.",
+  전시회: "관람 소요 시간, 사진 촬영 가능 구역, 도슨트 운영 여부를 함께 확인하면 더 편하게 둘러볼 수 있습니다. 인기 전시는 주말 대기가 길어질 수 있어 예매 가능 여부도 살펴보세요.",
+  공연: "공연 시작 시간, 입장 규정, 티켓 수령 방식, 좌석 위치를 미리 확인하면 관람 불편을 줄일 수 있습니다. 공연장 주변 교통과 주차 할인 여부도 함께 확인하는 것이 좋습니다."
+};
+
 export async function fetchTourApiEvents(category: EventItem["category"]): Promise<EventItem[]> {
   const serviceKey = await getTourApiServiceKey();
   if (!serviceKey) return [];
@@ -58,6 +65,7 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
     const startDate = normalizeDate(item.eventstartdate) || "2026-01-01";
     const endDate = normalizeDate(item.eventenddate) || startDate;
     const slug = `tourapi-${item.contentid || index}-${slugify(title)}`;
+    const venue = [item.addr1, item.addr2].filter(Boolean).join(" ") || `${region} 행사장`;
 
     return {
       id: 10000 + index,
@@ -66,7 +74,7 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
       category,
       region,
       city: detectCity(item.addr1 || ""),
-      venue: [item.addr1, item.addr2].filter(Boolean).join(" ") || `${region} 행사장`,
+      venue,
       startDate,
       endDate,
       organizer: stripHtml(item.sponsor1) || stripHtml(item.sponsor2) || "공식 안내 확인",
@@ -76,7 +84,7 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
         title,
         category,
         region,
-        venue: [item.addr1, item.addr2].filter(Boolean).join(" ") || `${region} 행사장`,
+        venue,
         overview: item.overview
       }),
       admissionFee: "공식 안내 확인",
@@ -274,5 +282,5 @@ function buildDescription({
   const cleanOverview = stripHtml(overview);
   if (cleanOverview.length > 80) return cleanOverview;
 
-  return `${title}은 ${region} 지역에서 열리는 ${category} 행사입니다. 행사장은 ${venue}이며, 방문 전 운영 시간, 참가비, 현장 혼잡도, 교통 정보를 함께 확인하는 것이 좋습니다. 축제바라는 공개 행사 정보를 바탕으로 기간, 장소, 문의처, 방문 전 확인 사항을 정리해 제공합니다.`;
+  return `${title}은 ${venue}에서 확인할 수 있는 ${region} 지역 ${category} 일정입니다. ${categoryGuide[category]} 축제바라는 공개 행사 정보를 바탕으로 기간, 장소, 문의처, 방문 전 확인 사항을 정리해 제공합니다.`;
 }

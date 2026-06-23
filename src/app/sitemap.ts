@@ -3,6 +3,8 @@ import { SITE_URL } from "@/lib/constants";
 import { isVerifiedEvent } from "@/lib/events";
 import { getRuntimeEvents } from "@/lib/runtimeEvents";
 
+export const runtime = "edge";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const events = await getRuntimeEvents();

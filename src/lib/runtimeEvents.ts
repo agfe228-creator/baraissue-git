@@ -56,7 +56,7 @@ function toDateString(value: Date) {
 }
 
 async function getProviderEvents() {
-  if (!hasTourApiServiceKey()) return events;
+  if (!(await hasTourApiServiceKey())) return events;
 
   try {
     const providers = [festivalProvider, fairProvider, exhibitionProvider, performanceProvider];

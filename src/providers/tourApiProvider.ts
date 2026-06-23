@@ -24,24 +24,24 @@ const endpoint = "https://apis.data.go.kr/B551011/KorService2/searchFestival2";
 const detailEndpoint = "https://apis.data.go.kr/B551011/KorService2/detailCommon2";
 const detailIntroEndpoint = "https://apis.data.go.kr/B551011/KorService2/detailIntro2";
 
-const regionNames = [
-  "서울",
-  "경기",
-  "인천",
-  "부산",
-  "대구",
-  "광주",
-  "대전",
-  "울산",
-  "세종",
-  "강원",
-  "충북",
-  "충남",
-  "전북",
-  "전남",
-  "경북",
-  "경남",
-  "제주"
+const regionAliases: Array<[string, string[]]> = [
+  ["서울", ["서울", "서울특별시"]],
+  ["경기", ["경기", "경기도"]],
+  ["인천", ["인천", "인천광역시"]],
+  ["부산", ["부산", "부산광역시"]],
+  ["대구", ["대구", "대구광역시"]],
+  ["광주", ["광주", "광주광역시"]],
+  ["대전", ["대전", "대전광역시"]],
+  ["울산", ["울산", "울산광역시"]],
+  ["세종", ["세종", "세종특별자치시"]],
+  ["강원", ["강원", "강원도", "강원특별자치도"]],
+  ["충북", ["충북", "충청북도"]],
+  ["충남", ["충남", "충청남도"]],
+  ["전북", ["전북", "전라북도", "전북특별자치도"]],
+  ["전남", ["전남", "전라남도"]],
+  ["경북", ["경북", "경상북도"]],
+  ["경남", ["경남", "경상남도"]],
+  ["제주", ["제주", "제주도", "제주특별자치도"]]
 ];
 
 const categoryGuide: Record<EventItem["category"], string> = {
@@ -61,7 +61,8 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
 
   return detailedItems.map((item, index) => {
     const title = item.title?.trim() || `${category} 행사 ${index + 1}`;
-    const region = detectRegion(item.addr1 || "");
+    const address = item.addr1 || "";
+    const region = detectRegion(address);
     const startDate = normalizeDate(item.eventstartdate) || "2026-01-01";
     const endDate = normalizeDate(item.eventenddate) || startDate;
     const slug = `tourapi-${item.contentid || index}-${slugify(title)}`;
@@ -73,7 +74,7 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
       title,
       category,
       region,
-      city: detectCity(item.addr1 || ""),
+      city: detectCity(address, region),
       venue,
       startDate,
       endDate,
@@ -237,11 +238,15 @@ function normalizeDate(value?: string) {
 }
 
 function detectRegion(address: string) {
-  return regionNames.find((region) => address.includes(region)) || "서울";
+  const normalized = address.replace(/\s+/g, "");
+  const match = regionAliases.find(([, aliases]) => aliases.some((alias) => normalized.includes(alias)));
+  return match?.[0] || "지역 확인 필요";
 }
 
-function detectCity(address: string) {
-  return address.split(" ")[1] || regionToSlug(detectRegion(address));
+function detectCity(address: string, region: string) {
+  const parts = address.trim().split(/\s+/).filter(Boolean);
+  const city = parts.find((part) => /시|군|구$/.test(part) && !part.includes("특별시") && !part.includes("광역시"));
+  return city || (region === "지역 확인 필요" ? "주소 확인" : regionToSlug(region));
 }
 
 function slugify(value: string) {
@@ -282,5 +287,6 @@ function buildDescription({
   const cleanOverview = stripHtml(overview);
   if (cleanOverview.length > 80) return cleanOverview;
 
-  return `${title}은 ${venue}에서 확인할 수 있는 ${region} 지역 ${category} 일정입니다. ${categoryGuide[category]} 축제바라는 공개 행사 정보를 바탕으로 기간, 장소, 문의처, 방문 전 확인 사항을 정리해 제공합니다.`;
+  const regionText = region === "지역 확인 필요" ? "공식 주소 확인이 필요한" : `${region} 지역`;
+  return `${title}은 ${venue}에서 확인할 수 있는 ${regionText} ${category} 일정입니다. ${categoryGuide[category]} 축제바라는 공개 행사 정보를 바탕으로 기간, 장소, 문의처, 방문 전 확인 사항을 정리해 제공합니다.`;
 }

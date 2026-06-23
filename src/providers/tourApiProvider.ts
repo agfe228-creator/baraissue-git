@@ -45,7 +45,7 @@ const regionNames = [
 ];
 
 export async function fetchTourApiEvents(category: EventItem["category"]): Promise<EventItem[]> {
-  const serviceKey = getTourApiServiceKey();
+  const serviceKey = await getTourApiServiceKey();
   if (!serviceKey) return [];
 
   const items = await fetchTourApiList(serviceKey);
@@ -91,12 +91,12 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
   });
 }
 
-export function hasTourApiServiceKey() {
-  return Boolean(getTourApiServiceKey());
+export async function hasTourApiServiceKey() {
+  return Boolean(await getTourApiServiceKey());
 }
 
 export async function fetchTourApiDebug() {
-  const serviceKey = getTourApiServiceKey();
+  const serviceKey = await getTourApiServiceKey();
   if (!serviceKey) return { hasKey: false, itemCount: 0, message: "TourAPI key is missing." };
 
   try {
@@ -144,7 +144,7 @@ async function fetchTourApiList(serviceKey: string): Promise<TourApiItem[]> {
 }
 
 async function fetchTourApiDetail(item: TourApiItem): Promise<TourApiItem> {
-  const serviceKey = getTourApiServiceKey();
+  const serviceKey = await getTourApiServiceKey();
   if (!serviceKey || !item.contentid) return item;
 
   const url = new URL(detailEndpoint);
@@ -170,7 +170,7 @@ async function fetchTourApiDetail(item: TourApiItem): Promise<TourApiItem> {
 }
 
 async function fetchTourApiIntro(item: TourApiItem): Promise<TourApiItem> {
-  const serviceKey = getTourApiServiceKey();
+  const serviceKey = await getTourApiServiceKey();
   if (!serviceKey || !item.contentid) return {};
 
   const url = new URL(detailIntroEndpoint);
@@ -192,13 +192,30 @@ async function fetchTourApiIntro(item: TourApiItem): Promise<TourApiItem> {
   }
 }
 
-function getTourApiServiceKey() {
+async function getTourApiServiceKey() {
+  const processKey = getTourApiServiceKeyFromProcess();
+  if (processKey) return processKey;
+
+  try {
+    const { getRequestContext } = await import("@cloudflare/next-on-pages");
+    const env = getRequestContext().env as Record<string, string | undefined>;
+    return getTourApiServiceKeyFromEnv(env);
+  } catch {
+    return "";
+  }
+}
+
+function getTourApiServiceKeyFromProcess() {
+  return getTourApiServiceKeyFromEnv(process.env as Record<string, string | undefined>);
+}
+
+function getTourApiServiceKeyFromEnv(env: Record<string, string | undefined>) {
   return (
-    process.env.TOUR_API_SERVICE_KEY ||
-    process.env.TOURAPI_SERVICE_KEY ||
-    process.env.TOUR_API_KEY ||
-    process.env.PUBLIC_DATA_SERVICE_KEY ||
-    process.env.NEXT_PUBLIC_TOUR_API_SERVICE_KEY ||
+    env.TOUR_API_SERVICE_KEY ||
+    env.TOURAPI_SERVICE_KEY ||
+    env.TOUR_API_KEY ||
+    env.PUBLIC_DATA_SERVICE_KEY ||
+    env.NEXT_PUBLIC_TOUR_API_SERVICE_KEY ||
     ""
   ).trim();
 }

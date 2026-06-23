@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ month: st
     title: `${month}월 행사`,
     description: `${month}월에 열리는 전국 축제, 박람회, 전시회, 공연 정보를 확인하세요.`,
     alternates: { canonical: `/month/${month}` },
-    robots: { index: false, follow: true }
+    robots: { index: true, follow: true }
   };
 }
 

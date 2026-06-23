@@ -12,6 +12,8 @@ type TourApiItem = {
   tel?: string;
   homepage?: string;
   eventhomepage?: string;
+  firstimage?: string;
+  firstimage2?: string;
   sponsor1?: string;
   sponsor2?: string;
   sponsor1tel?: string;
@@ -86,7 +88,13 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
       endDate,
       organizer: stripHtml(item.sponsor1) || stripHtml(item.sponsor2) || "",
       website: cleanHomepage(item.eventhomepage) || cleanHomepage(item.homepage),
-      description: stripHtml(item.overview) || `${title} 행사 정보입니다. 방문 전 공식 안내를 확인해 주세요.`,
+      description: buildDescription({
+        title,
+        category,
+        region,
+        venue: [item.addr1, item.addr2].filter(Boolean).join(" ") || `${region} 행사장`,
+        overview: item.overview
+      }),
       admissionFee: "공식 안내 확인",
       parkingInfo: "주차 정보는 공식 안내 또는 행사장 문의처를 확인해 주세요.",
       transportInfo: "대중교통 및 행사장 교통 안내는 공식 안내를 확인해 주세요.",
@@ -181,4 +189,23 @@ function cleanHomepage(value?: string) {
   const text = stripHtml(value);
   const match = text.match(/https?:\/\/[^\s"]+/);
   return match?.[0] || "";
+}
+
+function buildDescription({
+  title,
+  category,
+  region,
+  venue,
+  overview
+}: {
+  title: string;
+  category: EventItem["category"];
+  region: string;
+  venue: string;
+  overview?: string;
+}) {
+  const cleanOverview = stripHtml(overview);
+  if (cleanOverview.length > 80) return cleanOverview;
+
+  return `${title}은 ${region} 지역에서 열리는 ${category} 행사입니다. 행사장은 ${venue}이며, 방문 전 운영 시간, 참가비, 현장 혼잡도, 교통 정보를 함께 확인하는 것이 좋습니다. 축제바라는 공개 행사 정보를 바탕으로 기간, 장소, 문의처, 방문 전 확인 사항을 정리해 제공합니다.`;
 }

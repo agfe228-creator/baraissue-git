@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: event.title,
     description: event.description,
     alternates: { canonical: `/event/${event.slug}` },
-    robots: event.slug.startsWith("tourapi-") ? { index: true, follow: true } : { index: false, follow: true },
+    robots: { index: true, follow: true },
     openGraph: {
       title: event.title,
       description: event.description,
@@ -141,7 +141,14 @@ function SourceValue({ event }: { event: EventItem }) {
     );
   }
 
-  return <span>축제바라 편집 데이터</span>;
+  return (
+    <span>
+      공개 행사 안내 및 축제바라 편집 기준{" "}
+      <a href="https://www.data.go.kr/tcs/dss/selectDataSetList.do?keyword=%ED%96%89%EC%82%AC" target="_blank" rel="noreferrer" className="text-bara-blue">
+        공공데이터 검색
+      </a>
+    </span>
+  );
 }
 
 function getRuntimeRelatedEvents(event: EventItem, allEvents: EventItem[]) {

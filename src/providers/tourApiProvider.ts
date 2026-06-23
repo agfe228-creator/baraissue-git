@@ -193,16 +193,7 @@ async function fetchTourApiIntro(item: TourApiItem): Promise<TourApiItem> {
 }
 
 async function getTourApiServiceKey() {
-  const processKey = getTourApiServiceKeyFromProcess();
-  if (processKey) return processKey;
-
-  try {
-    const { getRequestContext } = await import("@cloudflare/next-on-pages");
-    const env = getRequestContext().env as Record<string, string | undefined>;
-    return getTourApiServiceKeyFromEnv(env);
-  } catch {
-    return "";
-  }
+  return getTourApiServiceKeyFromProcess();
 }
 
 function getTourApiServiceKeyFromProcess() {

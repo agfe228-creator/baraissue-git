@@ -4,7 +4,7 @@ import { DetailTabs } from "@/components/DetailTabs";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { ShareButton } from "@/components/ShareButton";
 import { SITE_URL } from "@/lib/constants";
-import { EventItem, formatDateRange, getRelatedEvents } from "@/lib/events";
+import { EventItem, formatDateRange } from "@/lib/events";
 import { getRuntimeEvent, getRuntimeEvents } from "@/lib/runtimeEvents";
 import { CalendarDays, Clock3, Database, Globe2, MapPin, Phone, Ticket, UserRound } from "lucide-react";
 import type { Metadata } from "next";
@@ -146,8 +146,7 @@ function SourceValue({ event }: { event: EventItem }) {
 }
 
 function getRuntimeRelatedEvents(event: EventItem, allEvents: EventItem[]) {
-  const related = allEvents
+  return allEvents
     .filter((item) => item.slug !== event.slug && (item.category === event.category || item.region === event.region))
     .slice(0, 4);
-  return related.length ? related : getRelatedEvents(event);
 }

@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${region} 행사`,
     description: `${region}에서 열리는 축제, 박람회, 전시회, 공연 정보를 확인하세요.`,
     alternates: { canonical: `/region/${slug}` },
-    robots: { index: false, follow: true },
+    robots: { index: true, follow: true },
     openGraph: { title: `${region} 행사 | ${SITE_NAME}`, description: `${region} 지역 행사 정보` }
   };
 }

@@ -12,6 +12,7 @@ export type EventItem = {
   endDate: string;
   organizer: string;
   website: string;
+  image?: string;
   description: string;
   admissionFee: string;
   parkingInfo: string;
@@ -73,11 +74,22 @@ function makeSlug(categoryKey: string, index: number, title: string) {
 }
 
 const categorySeedCounts: Record<string, number> = {
-  festival: 138,
-  fair: 96,
-  exhibition: 124,
-  performance: 112
+  festival: 48,
+  fair: 28,
+  exhibition: 32,
+  performance: 28
 };
+
+const titleSuffixes = [
+  "봄 시즌",
+  "여름 특별전",
+  "가을 기획",
+  "겨울 마켓",
+  "주말 나들이",
+  "가족 체험",
+  "로컬 브랜드",
+  "문화 산책"
+];
 
 export const events: EventItem[] = categories.flatMap((category, categoryIndex) => {
   const label = category.label as EventItem["category"];
@@ -87,7 +99,8 @@ export const events: EventItem[] = categories.flatMap((category, categoryIndex) 
     const region = regions[(index + categoryIndex * 3) % regions.length];
     const city = cityByRegion[region][index % cityByRegion[region].length];
     const baseTitle = titleSeeds[label][index % titleSeeds[label].length];
-    const title = index < 5 ? baseTitle : `${region} ${baseTitle} ${index + 1}`;
+    const suffix = titleSuffixes[Math.floor(index / titleSeeds[label].length) % titleSuffixes.length];
+    const title = index < 5 ? baseTitle : `${region} ${baseTitle} ${suffix}`;
     const startDate = dateFor(index + categoryIndex, 10);
     const endDate = endDateFor(startDate, index);
     const free = index % 4 === 0;
@@ -106,7 +119,7 @@ export const events: EventItem[] = categories.flatMap((category, categoryIndex) 
       endDate,
       organizer: `${region}문화재단`,
       website: "",
-      description: `${title}은 ${region}에서 열리는 대표 ${label} 행사입니다. 가족, 연인, 친구와 함께 둘러보기 좋은 프로그램과 지역 특색을 담은 콘텐츠를 제공합니다.`,
+      description: `${title}은 ${region}에서 열리는 ${label} 행사입니다. 방문객은 행사 기간, 장소, 참가비, 교통 편의성을 함께 확인해 일정에 맞는 나들이 계획을 세울 수 있습니다. 축제바라는 지역 공개 정보와 편집 기준을 바탕으로 핵심 정보를 보기 쉽게 정리합니다.`,
       admissionFee: free ? "무료" : `${(index % 9 + 1) * 5000}원~`,
       parkingInfo: "행사장 주변 공영주차장 이용을 권장하며, 주말에는 대중교통 이용이 편리합니다.",
       transportInfo: "가까운 지하철역 또는 버스터미널에서 행사장 셔틀 및 도보 이동이 가능합니다.",

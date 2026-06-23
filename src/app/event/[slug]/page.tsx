@@ -22,6 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: event.title,
     description: event.description,
     alternates: { canonical: `/event/${event.slug}` },
+    robots: event.slug.startsWith("tourapi-") ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: {
       title: event.title,
       description: event.description,

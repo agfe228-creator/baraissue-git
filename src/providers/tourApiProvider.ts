@@ -48,24 +48,7 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
   const serviceKey = getTourApiServiceKey();
   if (!serviceKey) return [];
 
-  const url = new URL(endpoint);
-  url.searchParams.set("serviceKey", serviceKey);
-  url.searchParams.set("MobileOS", "ETC");
-  url.searchParams.set("MobileApp", "BaraIssue");
-  url.searchParams.set("_type", "json");
-  url.searchParams.set("eventStartDate", new Date().toISOString().slice(0, 10).replaceAll("-", ""));
-  url.searchParams.set("numOfRows", "200");
-  url.searchParams.set("pageNo", "1");
-  url.searchParams.set("arrange", "O");
-
-  const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`TourAPI request failed: ${response.status}`);
-  }
-
-  const payload = await response.json();
-  const rawItems = payload?.response?.body?.items?.item;
-  const items: TourApiItem[] = Array.isArray(rawItems) ? rawItems : rawItems ? [rawItems] : [];
+  const items = await fetchTourApiList(serviceKey);
 
   const detailedItems = await Promise.all(items.slice(0, 80).map((item) => fetchTourApiDetail(item)));
 
@@ -106,6 +89,58 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
       updatedAt: new Date().toISOString().slice(0, 10)
     };
   });
+}
+
+export function hasTourApiServiceKey() {
+  return Boolean(getTourApiServiceKey());
+}
+
+export async function fetchTourApiDebug() {
+  const serviceKey = getTourApiServiceKey();
+  if (!serviceKey) return { hasKey: false, itemCount: 0, message: "TourAPI key is missing." };
+
+  try {
+    const items = await fetchTourApiList(serviceKey);
+    return {
+      hasKey: true,
+      itemCount: items.length,
+      sampleTitles: items.slice(0, 5).map((item) => item.title || item.contentid || "제목 없음")
+    };
+  } catch (error) {
+    return {
+      hasKey: true,
+      itemCount: 0,
+      message: error instanceof Error ? error.message : "TourAPI request failed."
+    };
+  }
+}
+
+async function fetchTourApiList(serviceKey: string): Promise<TourApiItem[]> {
+  const startDates = getStartDateCandidates();
+
+  for (const startDate of startDates) {
+    const url = new URL(endpoint);
+    url.searchParams.set("serviceKey", serviceKey);
+    url.searchParams.set("MobileOS", "ETC");
+    url.searchParams.set("MobileApp", "BaraIssue");
+    url.searchParams.set("_type", "json");
+    url.searchParams.set("eventStartDate", startDate);
+    url.searchParams.set("numOfRows", "200");
+    url.searchParams.set("pageNo", "1");
+    url.searchParams.set("arrange", "O");
+
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`TourAPI request failed: ${response.status}`);
+    }
+
+    const payload = await response.json();
+    const rawItems = payload?.response?.body?.items?.item;
+    const items: TourApiItem[] = Array.isArray(rawItems) ? rawItems : rawItems ? [rawItems] : [];
+    if (items.length) return items;
+  }
+
+  return [];
 }
 
 async function fetchTourApiDetail(item: TourApiItem): Promise<TourApiItem> {
@@ -166,6 +201,18 @@ function getTourApiServiceKey() {
     process.env.NEXT_PUBLIC_TOUR_API_SERVICE_KEY ||
     ""
   ).trim();
+}
+
+function getStartDateCandidates() {
+  const today = new Date();
+  const currentYear = today.getUTCFullYear();
+  return [
+    today.toISOString().slice(0, 10).replaceAll("-", ""),
+    `${currentYear}0101`,
+    `${currentYear - 1}0101`,
+    `${currentYear - 2}0101`,
+    "20240101"
+  ];
 }
 
 function normalizeDate(value?: string) {

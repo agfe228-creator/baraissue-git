@@ -1,4 +1,4 @@
-import { EventItem, events } from "@/lib/events";
+import { EventItem, events, sortForPublicDisplay } from "@/lib/events";
 
 export type EventQuery = {
   category?: string;
@@ -40,7 +40,7 @@ export function filterEvents(query: EventQuery, source: EventItem[] = events) {
   if (query.sort === "start") {
     result.sort((a, b) => a.startDate.localeCompare(b.startDate));
   } else {
-    result.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    result = sortForPublicDisplay(result);
   }
 
   return result;

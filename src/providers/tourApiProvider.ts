@@ -51,6 +51,26 @@ const categoryGuide: Record<EventItem["category"], string> = {
   공연: "공연 시작 시간, 입장 규정, 티켓 수령 방식, 좌석 위치를 미리 확인하면 관람 불편을 줄일 수 있습니다. 공연장 주변 교통과 주차 할인 여부도 함께 확인하는 것이 좋습니다."
 };
 
+const regionVisitNotes: Record<string, string> = {
+  서울: "서울 도심 행사는 대중교통 접근성이 좋은 편이지만 퇴근 시간과 주말에는 주변 도로가 혼잡할 수 있습니다.",
+  경기: "경기 지역 행사는 행사장 간 거리가 넓은 경우가 있어 자가용과 대중교통 이동 시간을 함께 비교하는 것이 좋습니다.",
+  인천: "인천 행사는 공항철도, 지하철, 버스 접근성을 함께 확인하면 해안권과 도심권 이동 계획을 세우기 쉽습니다.",
+  부산: "부산 행사는 해안가와 도심 행사장의 혼잡 시간이 다를 수 있어 주차와 대중교통 막차 시간을 미리 확인하는 편이 좋습니다.",
+  대구: "대구 행사는 실내외 체감 온도 차이가 클 수 있어 야외 프로그램 여부와 휴식 공간을 함께 살펴보는 것이 좋습니다.",
+  광주: "광주 행사는 문화시설과 도심 상권이 가까운 경우가 많아 주변 동선까지 함께 계획하기 좋습니다.",
+  대전: "대전 행사는 기차역과 버스터미널 접근성을 기준으로 이동 시간을 계산하면 방문 계획을 세우기 쉽습니다.",
+  울산: "울산 행사는 산업도시권과 해안권 이동 거리가 있을 수 있어 행사장 위치를 먼저 확인하는 것이 좋습니다.",
+  세종: "세종 행사는 대중교통 배차와 주차 여건을 미리 확인하면 가족 단위 방문이 한결 수월합니다.",
+  강원: "강원 지역 행사는 이동 거리가 길어질 수 있어 날씨, 도로 상황, 숙박 여부를 함께 확인하는 것이 좋습니다.",
+  충북: "충북 행사는 도시권과 자연 관광지가 함께 이어지는 경우가 많아 주변 코스를 함께 살펴보면 좋습니다.",
+  충남: "충남 행사는 해안과 내륙 행사장의 교통 여건이 달라 출발 전 경로와 주차장을 확인하는 것이 좋습니다.",
+  전북: "전북 행사는 한옥마을, 문화유산, 지역 먹거리와 함께 둘러보기 좋은 일정이 많아 주변 동선을 함께 잡아보세요.",
+  전남: "전남 행사는 지역 간 이동 시간이 길 수 있어 행사장 주소와 주변 교통편, 숙박 여부를 미리 확인하는 것이 좋습니다.",
+  경북: "경북 행사는 역사 관광지와 함께 방문하기 좋은 경우가 많아 행사 시간과 주변 관람 시간을 함께 고려하세요.",
+  경남: "경남 행사는 해안권과 도심권의 이동 여건이 달라 행사장 위치와 주차 정보를 먼저 확인하는 편이 좋습니다.",
+  제주: "제주 행사는 날씨와 렌터카 이동 여건의 영향을 많이 받으므로 당일 공지와 도로 상황을 함께 확인하세요."
+};
+
 export async function fetchTourApiEvents(category: EventItem["category"]): Promise<EventItem[]> {
   const serviceKey = await getTourApiServiceKey();
   if (!serviceKey) return [];
@@ -78,7 +98,7 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
       venue,
       startDate,
       endDate,
-      organizer: stripHtml(item.sponsor1) || stripHtml(item.sponsor2) || "공식 안내 확인",
+      organizer: stripHtml(item.sponsor1) || stripHtml(item.sponsor2) || "주최 측 확인 필요",
       website: cleanHomepage(item.eventhomepage) || cleanHomepage(item.homepage),
       image: item.firstimage || item.firstimage2 || "",
       description: buildDescription({
@@ -88,11 +108,11 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
         venue,
         overview: item.overview
       }),
-      admissionFee: "공식 안내 확인",
+      admissionFee: "방문 전 확인 필요",
       parkingInfo: "주차 정보는 공식 안내 또는 행사장 문의처를 확인해 주세요.",
       transportInfo: "대중교통 및 행사장 교통 안내는 공식 안내를 확인해 주세요.",
       faq: "일정과 운영 내용은 주최 측 사정에 따라 변경될 수 있습니다.",
-      contact: stripHtml(item.sponsor1tel) || item.tel || "공식 안내 확인",
+      contact: stripHtml(item.sponsor1tel) || item.tel || "문의처 확인 필요",
       status: getStatusFromDates(startDate, endDate),
       createdAt: new Date().toISOString().slice(0, 10),
       updatedAt: new Date().toISOString().slice(0, 10)
@@ -285,8 +305,13 @@ function buildDescription({
   overview?: string;
 }) {
   const cleanOverview = stripHtml(overview);
-  if (cleanOverview.length > 80) return cleanOverview;
-
   const regionText = region === "지역 확인 필요" ? "공식 주소 확인이 필요한" : `${region} 지역`;
-  return `${title}은 ${venue}에서 확인할 수 있는 ${regionText} ${category} 일정입니다. ${categoryGuide[category]} 축제바라는 공개 행사 정보를 바탕으로 기간, 장소, 문의처, 방문 전 확인 사항을 정리해 제공합니다.`;
+  const visitNote = regionVisitNotes[region] || "행사장 주변 교통, 운영 시간, 현장 혼잡도는 행사마다 다를 수 있어 방문 전 공식 안내를 확인하는 것이 좋습니다.";
+  const guide = `${categoryGuide[category]} ${visitNote} 축제바라는 공개 행사 정보를 바탕으로 기간, 장소, 문의처, 방문 전 확인 사항을 정리해 제공합니다.`;
+
+  if (cleanOverview.length > 80) {
+    return `${cleanOverview} ${guide}`;
+  }
+
+  return `${title}: ${venue}에서 확인할 수 있는 ${regionText} ${category} 행사입니다. ${guide}`;
 }

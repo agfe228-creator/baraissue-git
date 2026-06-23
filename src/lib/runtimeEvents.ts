@@ -1,16 +1,6 @@
-import { EventItem, events, getStatusFromDates } from "./events";
-import { exhibitionProvider } from "../providers/exhibitionProvider";
-import { fairProvider } from "../providers/fairProvider";
+import { EventItem } from "./events";
 import { festivalProvider } from "../providers/festivalProvider";
-import { performanceProvider } from "../providers/performanceProvider";
 import { hasTourApiServiceKey } from "../providers/tourApiProvider";
-
-type DbEvent = Omit<EventItem, "startDate" | "endDate" | "createdAt" | "updatedAt"> & {
-  startDate: Date;
-  endDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
-};
 
 let cachedEvents: { expiresAt: number; items: EventItem[] } | null = null;
 const cacheMs = 10 * 60 * 1000;
@@ -36,37 +26,13 @@ export async function getRuntimeEvent(slug: string): Promise<EventItem | undefin
   return allEvents.find((event) => event.slug === normalizedSlug);
 }
 
-function normalizeDbEvent(event: DbEvent): EventItem {
-  const startDate = toDateString(event.startDate);
-  const endDate = toDateString(event.endDate);
-
-  return {
-    ...event,
-    category: event.category as EventItem["category"],
-    status: getStatusFromDates(startDate, endDate),
-    startDate,
-    endDate,
-    createdAt: toDateString(event.createdAt),
-    updatedAt: toDateString(event.updatedAt)
-  };
-}
-
-function toDateString(value: Date) {
-  return value.toISOString().slice(0, 10);
-}
-
 async function getProviderEvents() {
-  if (!(await hasTourApiServiceKey())) return events;
+  if (!(await hasTourApiServiceKey())) return [];
 
   try {
-    const providers = [festivalProvider, fairProvider, exhibitionProvider, performanceProvider];
-    const loaded = await Promise.all(providers.map((provider) => provider.fetchEvents()));
-    const merged = new Map<string, EventItem>();
-    for (const group of loaded) {
-      for (const event of group) merged.set(event.slug, event);
-    }
-    return merged.size ? [...merged.values()] : events;
+    const loaded = await festivalProvider.fetchEvents();
+    return loaded.filter((event) => event.slug.startsWith("tourapi-"));
   } catch {
-    return events;
+    return [];
   }
 }

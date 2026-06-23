@@ -45,7 +45,7 @@ const regionNames = [
 ];
 
 export async function fetchTourApiEvents(category: EventItem["category"]): Promise<EventItem[]> {
-  const serviceKey = process.env.TOUR_API_SERVICE_KEY;
+  const serviceKey = getTourApiServiceKey();
   if (!serviceKey) return [];
 
   const url = new URL(endpoint);
@@ -58,7 +58,7 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
   url.searchParams.set("pageNo", "1");
   url.searchParams.set("arrange", "O");
 
-  const response = await fetch(url);
+  const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) {
     throw new Error(`TourAPI request failed: ${response.status}`);
   }
@@ -109,7 +109,7 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
 }
 
 async function fetchTourApiDetail(item: TourApiItem): Promise<TourApiItem> {
-  const serviceKey = process.env.TOUR_API_SERVICE_KEY;
+  const serviceKey = getTourApiServiceKey();
   if (!serviceKey || !item.contentid) return item;
 
   const url = new URL(detailEndpoint);
@@ -122,7 +122,7 @@ async function fetchTourApiDetail(item: TourApiItem): Promise<TourApiItem> {
   url.searchParams.set("overviewYN", "Y");
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) return item;
     const payload = await response.json();
     const detail = payload?.response?.body?.items?.item;
@@ -135,7 +135,7 @@ async function fetchTourApiDetail(item: TourApiItem): Promise<TourApiItem> {
 }
 
 async function fetchTourApiIntro(item: TourApiItem): Promise<TourApiItem> {
-  const serviceKey = process.env.TOUR_API_SERVICE_KEY;
+  const serviceKey = getTourApiServiceKey();
   if (!serviceKey || !item.contentid) return {};
 
   const url = new URL(detailIntroEndpoint);
@@ -147,7 +147,7 @@ async function fetchTourApiIntro(item: TourApiItem): Promise<TourApiItem> {
   url.searchParams.set("contentTypeId", item.contenttypeid || "15");
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) return {};
     const payload = await response.json();
     const detail = payload?.response?.body?.items?.item;
@@ -155,6 +155,17 @@ async function fetchTourApiIntro(item: TourApiItem): Promise<TourApiItem> {
   } catch {
     return {};
   }
+}
+
+function getTourApiServiceKey() {
+  return (
+    process.env.TOUR_API_SERVICE_KEY ||
+    process.env.TOURAPI_SERVICE_KEY ||
+    process.env.TOUR_API_KEY ||
+    process.env.PUBLIC_DATA_SERVICE_KEY ||
+    process.env.NEXT_PUBLIC_TOUR_API_SERVICE_KEY ||
+    ""
+  ).trim();
 }
 
 function normalizeDate(value?: string) {

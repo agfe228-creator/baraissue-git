@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id           Int      @id @default(autoincrement())
+  slug         String   @unique
+  title        String
+  category     String
+  region       String
+  city         String
+  venue        String
+  startDate    DateTime
+  endDate      DateTime
+  organizer    String
+  website      String
+  description  String
+  admissionFee String
+  parkingInfo  String
+  transportInfo String
+  faq          String
+  contact      String
+  status       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

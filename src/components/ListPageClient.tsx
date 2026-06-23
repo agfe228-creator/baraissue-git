@@ -6,6 +6,7 @@ import { categories, months, regions } from "@/lib/constants";
 import { EventItem } from "@/lib/events";
 import { filterEvents, paginate } from "@/lib/filter";
 import { LayoutGrid, List } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -83,6 +84,20 @@ export function ListPageClient({
 
         <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm leading-6 text-slate-700">
           축제바라는 행사 기간, 지역, 장소, 참가비, 진행 상태를 기준으로 정보를 정리합니다. 공개 정보는 수시로 변경될 수 있으니 방문 전 문의처와 공식 안내를 함께 확인해 주세요.
+        </div>
+
+        <div className="mt-4 rounded-xl border border-bara-line bg-white p-4 text-sm leading-7 text-slate-700">
+          <p className="font-black text-bara-text">정보 출처와 검수 기준</p>
+          <p className="mt-2">
+            이 목록은 한국관광공사 TourAPI, 공공데이터포털 공개 자료, 주최기관과 지자체의 공개 안내를 바탕으로 정리합니다.
+            지역 표기는 행사 주소를 기준으로 분류하며, 일정과 운영 내용은 주최 측 사정에 따라 바뀔 수 있습니다.
+            축제바라는 출처가 확인된 행사부터 공개하고, 주소·기간·문의처가 불분명한 정보는 공개 전 보류합니다.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-3 font-bold text-bara-blue">
+            <a href="https://www.data.go.kr/data/15101578/openapi.do" target="_blank" rel="noreferrer">한국관광공사 TourAPI</a>
+            <a href="https://www.data.go.kr/" target="_blank" rel="noreferrer">공공데이터포털</a>
+            <Link href="/source-policy">출처 및 운영정책</Link>
+          </div>
         </div>
 
         {page.items.length ? (

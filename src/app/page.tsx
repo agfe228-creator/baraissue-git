@@ -2,17 +2,21 @@ import { AdBox } from "@/components/AdBox";
 import { EventCard } from "@/components/EventCard";
 import { SearchBox } from "@/components/SearchBox";
 import { categories, quickKeywords, regions, regionToSlug, statIcons } from "@/lib/constants";
+import { isVerifiedEvent, sortForPublicDisplay } from "@/lib/events";
 import { getRuntimeEvents } from "@/lib/runtimeEvents";
 import Link from "next/link";
 
 export default async function HomePage() {
   const events = await getRuntimeEvents();
-  const featuredEvents = events.slice(0, 8);
-  const latestEvents = [...events].sort((a, b) => b.id - a.id).slice(0, 8);
+  const publicEvents = sortForPublicDisplay(events);
+  const verifiedEvents = publicEvents.filter(isVerifiedEvent);
+  const displayEvents = verifiedEvents.length ? verifiedEvents : [];
+  const featuredEvents = displayEvents.filter((event) => event.status !== "종료").slice(0, 8);
+  const latestEvents = displayEvents.slice(0, 8);
   const stats = [
-    ["이번 주 행사", events.length],
-    ["진행중 행사", events.filter((event) => event.status === "진행중").length],
-    ["이번 달 행사", events.filter((event) => event.startDate.slice(5, 7) === "06").length]
+    ["공식 출처 행사", verifiedEvents.length],
+    ["진행중 행사", displayEvents.filter((event) => event.status === "진행중").length],
+    ["예정 행사", displayEvents.filter((event) => event.status === "예정").length]
   ];
 
   return (
@@ -25,7 +29,9 @@ export default async function HomePage() {
               <br />
               <span className="text-bara-blue">전국 행사</span>
             </h1>
-            <p className="mt-5 max-w-xl leading-7 text-slate-700">축제, 박람회, 전시회, 공연 일정을 한눈에 확인하고 특별한 순간을 만나보세요.</p>
+            <p className="mt-5 max-w-xl leading-7 text-slate-700">
+              공공데이터와 공개 안내를 바탕으로 전국 축제, 박람회, 전시회, 공연 일정을 정리합니다.
+            </p>
             <div className="mt-8 max-w-3xl">
               <SearchBox />
             </div>
@@ -62,7 +68,7 @@ export default async function HomePage() {
         <div className="mt-4 grid gap-4 md:grid-cols-4">
           {categories.map((category) => {
             const Icon = category.icon;
-            const count = events.filter((event) => event.category === category.label).length;
+            const count = verifiedEvents.filter((event) => event.category === category.label).length;
             return (
               <Link key={category.key} href={category.href} className="soft-card rounded-xl p-6 text-center transition hover:-translate-y-0.5">
                 <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full text-white" style={{ backgroundColor: category.color }}>
@@ -70,7 +76,7 @@ export default async function HomePage() {
                 </span>
                 <h2 className="mt-4 text-lg font-black">{category.label}</h2>
                 <p className="mt-2 text-sm text-bara-muted">다양한 {category.label} 정보를 확인</p>
-                <p className="mt-3 text-sm font-black text-bara-blue">{count.toLocaleString()}개 행사</p>
+                <p className="mt-3 text-sm font-black text-bara-blue">{count ? `${count.toLocaleString()}개 행사` : "정보 수집중"}</p>
               </Link>
             );
           })}
@@ -84,6 +90,11 @@ export default async function HomePage() {
             <EventCard key={event.slug} event={event} />
           ))}
         </div>
+        {!featuredEvents.length ? (
+          <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 p-5 text-sm leading-6 text-slate-700">
+            현재 공식 출처 행사 정보를 다시 수집하고 있습니다. 카테고리와 지역별 목록에서 공개 정보를 확인해 주세요.
+          </div>
+        ) : null}
         <AdBox className="mt-5" />
       </section>
 
@@ -94,6 +105,11 @@ export default async function HomePage() {
             <EventCard key={event.slug} event={event} />
           ))}
         </div>
+        {!latestEvents.length ? (
+          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-5 text-sm leading-6 text-slate-700">
+            공식 출처가 확인된 최신 행사를 우선 노출합니다. 정보가 부족한 행사는 검색 노출보다 검수와 보강을 먼저 진행합니다.
+          </div>
+        ) : null}
       </section>
 
       <section className="container-shell py-8">

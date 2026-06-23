@@ -46,10 +46,10 @@ export function ListPageClient({
     router.push(`${pathname}${next.toString() ? `?${next.toString()}` : ""}`);
   }
 
-  function goPage(value: number) {
+  function pageHref(value: number) {
     const next = new URLSearchParams(params.toString());
     next.set("page", String(value));
-    router.push(`${pathname}?${next.toString()}`);
+    return `${pathname}?${next.toString()}`;
   }
 
   return (
@@ -102,15 +102,15 @@ export function ListPageClient({
 
         <div className="mt-5 flex items-center justify-center gap-2">
           {Array.from({ length: Math.min(page.totalPages, 5) }, (_, index) => index + 1).map((num) => (
-            <button key={num} onClick={() => goPage(num)} className={`h-9 w-9 rounded-lg text-sm font-bold ${page.currentPage === num ? "bg-bara-blue text-white" : "border border-bara-line bg-white"}`}>
+            <a key={num} href={pageHref(num)} className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold ${page.currentPage === num ? "bg-bara-blue text-white" : "border border-bara-line bg-white"}`}>
               {num}
-            </button>
+            </a>
           ))}
           {page.totalPages > 5 ? <span className="px-2 text-sm">...</span> : null}
           {page.totalPages > 5 ? (
-            <button onClick={() => goPage(page.totalPages)} className="h-9 rounded-lg border border-bara-line bg-white px-3 text-sm font-bold">
+            <a href={pageHref(page.totalPages)} className="flex h-9 items-center justify-center rounded-lg border border-bara-line bg-white px-3 text-sm font-bold">
               {page.totalPages}
-            </button>
+            </a>
           ) : null}
         </div>
       </section>

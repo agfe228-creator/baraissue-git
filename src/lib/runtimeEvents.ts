@@ -3,6 +3,7 @@ import { exhibitionProvider } from "../providers/exhibitionProvider";
 import { fairProvider } from "../providers/fairProvider";
 import { festivalProvider } from "../providers/festivalProvider";
 import { performanceProvider } from "../providers/performanceProvider";
+import { hasTourApiServiceKey } from "../providers/tourApiProvider";
 
 type DbEvent = Omit<EventItem, "startDate" | "endDate" | "createdAt" | "updatedAt"> & {
   startDate: Date;
@@ -55,7 +56,7 @@ function toDateString(value: Date) {
 }
 
 async function getProviderEvents() {
-  if (!process.env.TOUR_API_SERVICE_KEY) return events;
+  if (!hasTourApiServiceKey()) return events;
 
   try {
     const providers = [festivalProvider, fairProvider, exhibitionProvider, performanceProvider];

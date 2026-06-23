@@ -31,10 +31,11 @@ export function filterEvents(query: EventQuery, source: EventItem[] = events) {
   }
 
   if (query.q) {
-    const keyword = query.q.trim().toLowerCase();
-    result = result.filter((event) =>
-      [event.title, event.region, event.city, event.venue, event.category, event.description].join(" ").toLowerCase().includes(keyword)
-    );
+    const keywords = query.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    result = result.filter((event) => {
+      const searchable = [event.title, event.region, event.city, event.venue, event.category, event.description].join(" ").toLowerCase();
+      return keywords.every((keyword) => searchable.includes(keyword));
+    });
   }
 
   if (query.sort === "start") {

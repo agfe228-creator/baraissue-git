@@ -2,6 +2,8 @@ import { ListPage } from "@/components/ListPage";
 import { SearchBox } from "@/components/SearchBox";
 import { getRuntimeEvents } from "@/lib/runtimeEvents";
 
+export const runtime = "edge";
+
 export const metadata = {
   title: "검색 결과",
   description: "축제바라 행사 검색 결과입니다.",

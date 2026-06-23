@@ -2,6 +2,8 @@ import { ListPage } from "@/components/ListPage";
 import { getRuntimeEvents } from "@/lib/runtimeEvents";
 import type { Metadata } from "next";
 
+export const runtime = "edge";
+
 export async function generateMetadata({ params }: { params: Promise<{ month: string }> }): Promise<Metadata> {
   const { month } = await params;
   return {

@@ -3,6 +3,8 @@ import { SITE_NAME, slugToRegion } from "@/lib/constants";
 import { getRuntimeEvents } from "@/lib/runtimeEvents";
 import type { Metadata } from "next";
 
+export const runtime = "edge";
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const region = slugToRegion(slug);

@@ -153,6 +153,32 @@ export function getStatusFromDates(startDate: string, endDate: string): EventIte
   return "진행중";
 }
 
+export function isVerifiedEvent(event: EventItem) {
+  return event.slug.startsWith("tourapi-");
+}
+
+export function hasOfficialInfo(event: EventItem) {
+  return Boolean(event.website || event.image || isVerifiedEvent(event));
+}
+
+export function sortForPublicDisplay(source: EventItem[]) {
+  return [...source].sort((a, b) => {
+    const verifiedGap = Number(isVerifiedEvent(b)) - Number(isVerifiedEvent(a));
+    if (verifiedGap) return verifiedGap;
+
+    const activeGap = statusWeight(b.status) - statusWeight(a.status);
+    if (activeGap) return activeGap;
+
+    return a.startDate.localeCompare(b.startDate);
+  });
+}
+
+function statusWeight(status: EventItem["status"]) {
+  if (status === "진행중") return 3;
+  if (status === "예정") return 2;
+  return 1;
+}
+
 export function getRelatedEvents(event: EventItem) {
   return events
     .filter((item) => item.slug !== event.slug && (item.category === event.category || item.region === event.region))

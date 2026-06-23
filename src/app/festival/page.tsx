@@ -1,4 +1,5 @@
 import { ListPage } from "@/components/ListPage";
+import { isVerifiedEvent } from "@/lib/events";
 import { getRuntimeEvents } from "@/lib/runtimeEvents";
 
 export const metadata = {
@@ -10,5 +11,5 @@ export const metadata = {
 
 export default async function FestivalPage() {
   const events = await getRuntimeEvents();
-  return <ListPage title="전국 축제 모음" description="계절별, 지역별로 열리는 축제 정보를 확인해보세요." baseEvents={events} fixedQuery={{ category: "축제" }} />;
+  return <ListPage title="전국 축제 모음" description="공식 출처가 확인된 전국 축제 정보를 우선 정리합니다." baseEvents={events.filter(isVerifiedEvent)} fixedQuery={{ category: "축제" }} />;
 }

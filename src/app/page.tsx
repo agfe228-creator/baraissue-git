@@ -118,6 +118,22 @@ export default async function HomePage() {
       <OfficialGuideSection />
 
       <section className="container-shell py-8">
+        <SectionTitle title="정보 출처와 운영 기준" href="/source-policy" />
+        <div className="mt-4 rounded-xl border border-bara-line bg-white p-5 text-sm leading-7 text-slate-700 shadow-sm">
+          <p>
+            축제바라는 한국관광공사 TourAPI, 공공데이터포털, 주최기관과 지자체의 공개 안내를 바탕으로 행사 정보를 정리합니다.
+            행사 주소를 기준으로 지역을 분류하고, 기간·장소·문의처·이미지·공식 안내가 확인되는 정보를 우선 노출합니다.
+            행사는 날씨와 주최 측 사정에 따라 변경될 수 있어 방문 전 공식 안내 확인을 권장합니다.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-3 font-bold text-bara-blue">
+            <a href="https://www.data.go.kr/data/15101578/openapi.do" target="_blank" rel="noreferrer">한국관광공사 TourAPI</a>
+            <a href="https://www.data.go.kr/" target="_blank" rel="noreferrer">공공데이터포털</a>
+            <Link href="/source-policy">출처 및 운영정책</Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="container-shell py-8">
         <SectionTitle title="지역별 바로가기" href="/region/seoul" />
         <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-12">
           {regions.map((region) => (

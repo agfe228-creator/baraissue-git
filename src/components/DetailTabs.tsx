@@ -14,9 +14,17 @@ const categoryGuides: Record<EventItem["category"], string[]> = {
   공연: ["공연은 좌석 배치, 입장 가능 시간, 지연 입장 규정을 확인해야 관람 불편을 줄일 수 있습니다.", "예매처와 현장 수령 방식, 주차 할인 여부를 함께 확인하면 공연 당일 이동이 수월합니다."]
 };
 
+const categoryNouns: Record<EventItem["category"], string> = {
+  축제: "축제 행사",
+  박람회: "박람회",
+  전시회: "전시회",
+  공연: "공연"
+};
+
 export function DetailTabs({ event, related }: { event: EventItem; related: EventItem[] }) {
   const [active, setActive] = useState(tabs[0]);
   const guideItems = categoryGuides[event.category];
+  const categoryName = categoryNouns[event.category];
 
   return (
     <section className="soft-card rounded-xl p-5">
@@ -37,7 +45,7 @@ export function DetailTabs({ event, related }: { event: EventItem; related: Even
             <div>
               <p className="leading-7 text-slate-700">{event.description}</p>
               <p className="mt-4 leading-7 text-slate-700">
-                {event.title}은 {event.region} {event.city} 권역에서 확인할 수 있는 {event.category} 일정입니다. 방문 전에는 행사 기간과 장소,
+                {event.title}은 {event.region} {event.city} 권역에서 확인할 수 있는 {categoryName}입니다. 방문 전에는 행사 기간과 장소,
                 참가비, 문의처를 함께 확인하고, 동행 인원과 이동 수단에 맞춰 관람 시간을 넉넉하게 잡는 것을 권장합니다.
               </p>
               <p className="mt-4 leading-7 text-slate-700">
@@ -86,11 +94,15 @@ export function DetailTabs({ event, related }: { event: EventItem; related: Even
           </div>
         ) : null}
         {active === "관련 행사" ? (
-          <div className="grid gap-4 md:grid-cols-2">
-            {related.map((item) => (
-              <EventCard key={item.slug} event={item} />
-            ))}
-          </div>
+          related.length ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {related.map((item) => (
+                <EventCard key={item.slug} event={item} />
+              ))}
+            </div>
+          ) : (
+            <p className="leading-7 text-slate-700">공식 출처가 확인된 관련 행사를 순서대로 정리하고 있습니다.</p>
+          )
         ) : null}
       </div>
     </section>

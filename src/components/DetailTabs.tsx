@@ -64,6 +64,13 @@ export function DetailTabs({ event, related }: { event: EventItem; related: Even
                   ))}
                 </ul>
               </div>
+              <div className="mt-5 rounded-xl border border-amber-100 bg-amber-50 p-4 text-sm leading-7 text-slate-700">
+                <p className="font-black text-bara-text">현장 이용 팁</p>
+                <p className="mt-2">
+                  같은 행사라도 평일과 주말의 혼잡도, 체험 프로그램 대기 시간, 주변 식당과 편의시설 이용 가능 시간이 다를 수 있습니다.
+                  아이와 함께 방문한다면 화장실 위치와 휴식 공간을 먼저 확인하고, 사진 촬영이나 반려동물 동반처럼 현장 규정이 필요한 사항은 공식 안내를 확인해 주세요.
+                </p>
+              </div>
               <ul className="mt-5 space-y-3 text-sm font-semibold text-slate-700">
                 {["공식 일정과 장소 확인", "요금 및 예약 조건 확인", "대중교통과 주차 동선 확인", "동행자 유형에 맞는 관람 계획"].map((item) => (
                   <li key={item} className="flex items-center gap-2">

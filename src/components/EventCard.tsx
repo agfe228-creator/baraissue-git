@@ -11,6 +11,11 @@ export function EventCard({ event, list = false }: { event: EventItem; list?: bo
       className={`soft-card group flex h-full rounded-xl p-4 transition hover:-translate-y-0.5 hover:border-blue-200 ${list ? "flex-col gap-3 sm:flex-row sm:items-center" : "flex-col"}`}
     >
       <div className="min-w-0 flex-1">
+        {event.image ? (
+          <div className="mb-4 h-32 overflow-hidden rounded-lg bg-slate-100">
+            <img src={event.image} alt={`${event.title} 행사 이미지`} className="h-full w-full object-cover transition group-hover:scale-105" loading="lazy" />
+          </div>
+        ) : null}
         <div className="mb-3 flex items-center justify-between gap-2">
           <div className="flex gap-2">
             <CategoryBadge label={event.category} />

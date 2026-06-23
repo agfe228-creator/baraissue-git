@@ -17,9 +17,9 @@ export default async function HomePage() {
   const featuredEvents = displayEvents.filter((event) => event.status !== "종료").slice(0, 8);
   const latestEvents = displayEvents.slice(0, 8);
   const stats = [
-    ["공식 출처", verifiedEvents.length ? `${verifiedEvents.length.toLocaleString()}개` : "확인중"],
-    ["진행중", displayEvents.filter((event) => event.status === "진행중").length ? `${displayEvents.filter((event) => event.status === "진행중").length.toLocaleString()}개` : "확인중"],
-    ["예정 행사", displayEvents.filter((event) => event.status === "예정").length ? `${displayEvents.filter((event) => event.status === "예정").length.toLocaleString()}개` : "확인중"]
+    ["공식 출처", verifiedEvents.length ? `${verifiedEvents.length.toLocaleString()}개` : "검수중"],
+    ["방문 가이드", "6개"],
+    ["지역 탐색", "17개"]
   ];
 
   return (
@@ -79,7 +79,7 @@ export default async function HomePage() {
                 </span>
                 <h2 className="mt-4 text-lg font-black">{category.label}</h2>
                 <p className="mt-2 text-sm text-bara-muted">다양한 {category.label} 정보를 확인</p>
-                <p className="mt-3 text-sm font-black text-bara-blue">{count ? `${count.toLocaleString()}개 행사` : "정보 수집중"}</p>
+                <p className="mt-3 text-sm font-black text-bara-blue">{count ? `${count.toLocaleString()}개 행사` : "가이드 제공"}</p>
               </Link>
             );
           })}
@@ -95,7 +95,7 @@ export default async function HomePage() {
         </div>
         {!featuredEvents.length ? (
           <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 p-5 text-sm leading-6 text-slate-700">
-            현재 공식 출처 행사 정보를 다시 수집하고 있습니다. 카테고리와 지역별 목록에서 공개 정보를 확인해 주세요.
+            공식 출처 행사 정보를 검수하고 있습니다. 실제 방문 전 확인해야 할 일정, 교통, 요금 안내를 먼저 정리해 제공합니다.
           </div>
         ) : null}
         <AdBox className="mt-5" />
@@ -110,7 +110,7 @@ export default async function HomePage() {
         </div>
         {!latestEvents.length ? (
           <div className="mt-4 rounded-xl border border-slate-200 bg-white p-5 text-sm leading-6 text-slate-700">
-            공식 출처가 확인된 최신 행사를 우선 노출합니다. 정보가 부족한 행사는 검색 노출보다 검수와 보강을 먼저 진행합니다.
+            공식 출처가 확인된 최신 행사를 우선 노출합니다. 정보가 부족한 행사는 공개 전 검수와 보강을 먼저 진행합니다.
           </div>
         ) : null}
       </section>

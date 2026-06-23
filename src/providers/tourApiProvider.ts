@@ -53,10 +53,10 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
   url.searchParams.set("MobileOS", "ETC");
   url.searchParams.set("MobileApp", "BaraIssue");
   url.searchParams.set("_type", "json");
-  url.searchParams.set("eventStartDate", "20260101");
-  url.searchParams.set("numOfRows", "100");
+  url.searchParams.set("eventStartDate", new Date().toISOString().slice(0, 10).replaceAll("-", ""));
+  url.searchParams.set("numOfRows", "200");
   url.searchParams.set("pageNo", "1");
-  url.searchParams.set("arrange", "A");
+  url.searchParams.set("arrange", "O");
 
   const response = await fetch(url);
   if (!response.ok) {
@@ -67,7 +67,7 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
   const rawItems = payload?.response?.body?.items?.item;
   const items: TourApiItem[] = Array.isArray(rawItems) ? rawItems : rawItems ? [rawItems] : [];
 
-  const detailedItems = await Promise.all(items.map((item) => fetchTourApiDetail(item)));
+  const detailedItems = await Promise.all(items.slice(0, 80).map((item) => fetchTourApiDetail(item)));
 
   return detailedItems.map((item, index) => {
     const title = item.title?.trim() || `${category} 행사 ${index + 1}`;
@@ -86,8 +86,9 @@ export async function fetchTourApiEvents(category: EventItem["category"]): Promi
       venue: [item.addr1, item.addr2].filter(Boolean).join(" ") || `${region} 행사장`,
       startDate,
       endDate,
-      organizer: stripHtml(item.sponsor1) || stripHtml(item.sponsor2) || "",
+      organizer: stripHtml(item.sponsor1) || stripHtml(item.sponsor2) || "공식 안내 확인",
       website: cleanHomepage(item.eventhomepage) || cleanHomepage(item.homepage),
+      image: item.firstimage || item.firstimage2 || "",
       description: buildDescription({
         title,
         category,

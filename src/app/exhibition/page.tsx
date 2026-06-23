@@ -5,7 +5,7 @@ export const metadata = {
   title: "전시회",
   description: "예술, 문화, 디자인 전시회 일정을 확인하세요.",
   alternates: { canonical: "/exhibition" },
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
   openGraph: { title: "전국 전시회 모음", description: "예술, 문화, 디자인 전시회 일정을 확인하세요." }
 };
 

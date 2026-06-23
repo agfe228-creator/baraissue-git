@@ -81,6 +81,10 @@ export function ListPageClient({
 
         <p className="mt-6 text-sm text-slate-600">총 {filtered.length.toLocaleString()}개의 행사가 있습니다.</p>
 
+        <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm leading-6 text-slate-700">
+          축제바라는 행사 기간, 지역, 장소, 참가비, 진행 상태를 기준으로 정보를 정리합니다. 공개 정보는 수시로 변경될 수 있으니 방문 전 문의처와 공식 안내를 함께 확인해 주세요.
+        </div>
+
         {page.items.length ? (
           <div className={`mt-5 grid gap-4 ${view === "grid" ? "md:grid-cols-3" : "grid-cols-1"}`}>
             {page.items.map((event) => (

@@ -1,18 +1,29 @@
 import { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/constants";
-import { isVerifiedEvent } from "@/lib/events";
-import { getRuntimeEvents } from "@/lib/runtimeEvents";
+import { regionToSlug, regions, SITE_URL } from "@/lib/constants";
 
 export const runtime = "edge";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+const staticRoutes = [
+  "",
+  "/festival",
+  "/about",
+  "/contact",
+  "/privacy",
+  "/terms",
+  "/source-policy",
+  "/policy",
+  "/posts"
+];
+
+export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const events = await getRuntimeEvents();
-  const verifiedEvents = events.filter(isVerifiedEvent);
-  const staticRoutes = ["", "/about", "/contact", "/privacy", "/terms", ...(verifiedEvents.length ? ["/festival"] : [])];
-  return [
-    ...staticRoutes.map((route) => ({ url: `${SITE_URL}${route}`, lastModified: now })),
-    ...verifiedEvents
-      .map((event) => ({ url: `${SITE_URL}/event/${event.slug}`, lastModified: new Date(event.updatedAt) }))
-  ];
+  const regionRoutes = regions.map((region) => `/region/${regionToSlug(region)}`);
+  const monthRoutes = Array.from({ length: 12 }, (_, index) => `/month/${index + 1}`);
+
+  return [...staticRoutes, ...regionRoutes, ...monthRoutes].map((route) => ({
+    url: `${SITE_URL}${route}`,
+    lastModified: now,
+    changeFrequency: route === "" ? "daily" : "weekly",
+    priority: route === "" ? 1 : route === "/festival" ? 0.9 : 0.7
+  }));
 }

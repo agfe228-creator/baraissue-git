@@ -5,7 +5,6 @@ const redirects: Record<string, string> = {
   "/contact.html": "/contact",
   "/privacy.html": "/privacy",
   "/terms.html": "/terms",
-  "/policy": "/privacy",
   "/source-policy.html": "/source-policy"
 };
 
@@ -19,5 +18,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/about.html", "/contact.html", "/privacy.html", "/terms.html", "/policy", "/source-policy.html"]
+  matcher: ["/about.html", "/contact.html", "/privacy.html", "/terms.html", "/source-policy.html"]
 };

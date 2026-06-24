@@ -98,18 +98,18 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
         </div>
         <div className="mt-6 grid gap-3 rounded-xl border border-bara-line bg-slate-50 p-4 md:grid-cols-2">
           <Info icon={<CalendarDays size={16} />} label="기간" value={formatDateRange(event)} />
-          <Info icon={<Ticket size={16} />} label="참가비" value={event.admissionFee} />
+          {hasReliableValue(event.admissionFee) ? <Info icon={<Ticket size={16} />} label="참가비" value={event.admissionFee} /> : null}
           <Info icon={<MapPin size={16} />} label="장소" value={`${event.venue}`} />
           {event.website ? (
             <Info icon={<Globe2 size={16} />} label="공식 정보" value={<a href={event.website} target="_blank" rel="noreferrer" className="text-bara-blue">공식 홈페이지 열기</a>} />
           ) : null}
-          {event.organizer ? <Info icon={<UserRound size={16} />} label="주최" value={event.organizer} /> : null}
-          <Info icon={<Phone size={16} />} label="문의" value={event.contact} />
+          {hasReliableValue(event.organizer) ? <Info icon={<UserRound size={16} />} label="주최" value={event.organizer} /> : null}
+          {hasReliableValue(event.contact) ? <Info icon={<Phone size={16} />} label="문의" value={event.contact} /> : null}
           <Info icon={<Database size={16} />} label="정보 출처" value={<SourceValue event={event} />} />
           <Info icon={<Clock3 size={16} />} label="업데이트" value={event.updatedAt.replaceAll("-", ".")} />
         </div>
         <p className="mt-4 rounded-lg bg-blue-50 px-4 py-3 text-sm leading-6 text-slate-700">
-          행사 일정, 장소, 참가비는 주최 측 사정에 따라 변경될 수 있습니다. 방문 전 문의처 또는 공식 안내를 한 번 더 확인해 주세요.
+          행사 일정, 장소, 참가비는 주최 측 사정에 따라 변경될 수 있습니다. 방문 전 공식 안내와 현장 공지를 한 번 더 확인해 주세요.
         </p>
       </section>
       <div className="mt-5">
@@ -143,6 +143,10 @@ function SourceValue({ event }: { event: EventItem }) {
   }
 
   return <span>공식 출처 확인 전 편집 검수 데이터</span>;
+}
+
+function hasReliableValue(value: string) {
+  return Boolean(value && !value.includes("확인 필요") && !value.includes("공식 안내 확인"));
 }
 
 function getRuntimeRelatedEvents(event: EventItem, allEvents: EventItem[]) {

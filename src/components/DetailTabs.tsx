@@ -21,10 +21,27 @@ const categoryNouns: Record<EventItem["category"], string> = {
   공연: "공연"
 };
 
+const visitAngles = [
+  "처음 방문한다면 행사장 입구, 안내 부스, 주요 프로그램 위치를 먼저 파악해 두면 현장에서 헤매는 시간을 줄일 수 있습니다.",
+  "사진을 많이 남기고 싶다면 낮 시간대와 야간 운영 여부를 함께 확인하고, 인기 포토존은 혼잡 시간대를 피해서 둘러보는 편이 좋습니다.",
+  "아이와 함께 간다면 화장실, 수유실, 휴식 공간, 유모차 이동 가능 구간처럼 현장에서 바로 필요한 정보를 먼저 확인해 보세요.",
+  "먹거리나 체험 부스가 있는 행사는 결제 방식, 운영 마감 시간, 대기 줄 위치가 달라질 수 있어 현장 안내판을 함께 확인하는 것이 좋습니다."
+];
+
+const planningAngles = [
+  "일정이 짧은 행사는 도착 시간을 앞당기고, 기간이 긴 행사는 비교적 덜 붐비는 평일이나 오전 시간대를 고려해 볼 수 있습니다.",
+  "대중교통으로 이동한다면 행사 종료 후 귀가 동선을 미리 정해두는 것이 좋고, 자가용 이용 시에는 임시 주차장 운영 여부를 확인해 주세요.",
+  "무료 행사라도 일부 체험, 먹거리, 주차는 유료일 수 있으니 현장 결제 수단과 예약 필요 여부를 함께 살펴보는 것이 좋습니다.",
+  "우천이나 강풍이 예보된 날에는 야외 프로그램이 조정될 수 있으니 공식 공지와 현장 안내를 방문 당일 다시 확인하는 편이 안전합니다."
+];
+
 export function DetailTabs({ event, related }: { event: EventItem; related: EventItem[] }) {
   const [active, setActive] = useState(tabs[0]);
   const guideItems = categoryGuides[event.category];
   const categoryName = categoryNouns[event.category];
+  const seed = event.title.length + event.region.length + event.startDate.length;
+  const visitAngle = visitAngles[seed % visitAngles.length];
+  const planningAngle = planningAngles[(seed + event.city.length) % planningAngles.length];
 
   return (
     <section className="soft-card rounded-xl p-5">
@@ -46,11 +63,11 @@ export function DetailTabs({ event, related }: { event: EventItem; related: Even
               <p className="leading-7 text-slate-700">{event.description}</p>
               <p className="mt-4 leading-7 text-slate-700">
                 {event.title}은 {event.region} {event.city} 권역에서 확인할 수 있는 {categoryName}입니다. 방문 전에는 행사 기간과 장소,
-                참가비, 문의처를 함께 확인하고, 동행 인원과 이동 수단에 맞춰 관람 시간을 넉넉하게 잡는 것을 권장합니다.
+                문의처를 함께 확인하고, 동행 인원과 이동 수단에 맞춰 관람 시간을 넉넉하게 잡는 것을 권장합니다. {planningAngle}
               </p>
               <p className="mt-4 leading-7 text-slate-700">
-                축제바라는 행사명, 기간, 장소, 참가비, 문의 정보를 사용자가 빠르게 비교할 수 있도록 정리합니다.
-                가족 나들이, 주말 여행, 지역 문화 탐방을 계획할 때 일정과 접근성을 함께 확인해 보세요.
+                축제바라는 행사명, 기간, 장소, 문의 정보를 사용자가 빠르게 비교할 수 있도록 정리합니다.
+                가족 나들이, 주말 여행, 지역 문화 탐방을 계획할 때 일정과 접근성을 함께 확인해 보세요. {visitAngle}
               </p>
               <div className="mt-5 rounded-xl border border-bara-line bg-slate-50 p-4 text-sm leading-7 text-slate-700">
                 <p className="font-black text-bara-text">방문 전 확인하면 좋은 사항</p>
@@ -68,11 +85,11 @@ export function DetailTabs({ event, related }: { event: EventItem; related: Even
                 <p className="font-black text-bara-text">현장 이용 팁</p>
                 <p className="mt-2">
                   같은 행사라도 평일과 주말의 혼잡도, 체험 프로그램 대기 시간, 주변 식당과 편의시설 이용 가능 시간이 다를 수 있습니다.
-                  아이와 함께 방문한다면 화장실 위치와 휴식 공간을 먼저 확인하고, 사진 촬영이나 반려동물 동반처럼 현장 규정이 필요한 사항은 공식 안내를 확인해 주세요.
+                  반려동물 동반, 사진 촬영, 현장 접수처럼 규정이 필요한 사항은 공식 안내나 현장 안내 부스를 통해 한 번 더 확인해 주세요.
                 </p>
               </div>
               <ul className="mt-5 space-y-3 text-sm font-semibold text-slate-700">
-                {["공식 일정과 장소 확인", "요금 및 예약 조건 확인", "대중교통과 주차 동선 확인", "동행자 유형에 맞는 관람 계획"].map((item) => (
+                {["공식 일정과 장소 확인", "예약 및 현장 접수 조건 확인", "대중교통과 주차 동선 확인", "동행자 유형에 맞는 관람 계획"].map((item) => (
                   <li key={item} className="flex items-center gap-2">
                     <Check size={17} className="text-bara-blue" />
                     {item}

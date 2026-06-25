@@ -44,6 +44,10 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
   if (!event) notFound();
   const allEvents = await getRuntimeEvents();
   const related = getRuntimeRelatedEvents(event, allEvents);
+  const canonicalUrl = `${SITE_URL}/event/${event.slug}`;
+  const sourceUrl = event.website || "https://www.data.go.kr/data/15101578/openapi.do";
+  const organizerName = hasReliableValue(event.organizer) ? event.organizer : "한국관광공사 TourAPI 제공 행사 정보";
+  const offerPrice = getStructuredPrice(event.admissionFee);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -52,6 +56,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
     endDate: event.endDate,
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    image: event.image ? [event.image] : undefined,
+    url: canonicalUrl,
     location: {
       "@type": "Place",
       name: event.venue,
@@ -59,13 +65,20 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
     },
     organizer: {
       "@type": "Organization",
-      name: event.organizer,
-      url: event.website
+      name: organizerName,
+      url: sourceUrl
+    },
+    performer: {
+      "@type": event.category === "공연" ? "PerformingGroup" : "Organization",
+      name: organizerName
     },
     offers: {
       "@type": "Offer",
-      price: event.admissionFee,
-      url: event.website
+      url: sourceUrl,
+      price: offerPrice,
+      priceCurrency: "KRW",
+      validFrom: event.updatedAt,
+      availability: "https://schema.org/InStock"
     },
     description: event.description
   };
@@ -147,6 +160,12 @@ function SourceValue({ event }: { event: EventItem }) {
 
 function hasReliableValue(value: string) {
   return Boolean(value && !value.includes("확인 필요") && !value.includes("공식 안내 확인"));
+}
+
+function getStructuredPrice(value: string) {
+  if (!hasReliableValue(value) || value.includes("무료")) return "0";
+  const numeric = value.replace(/[^0-9]/g, "");
+  return numeric || "0";
 }
 
 function getRuntimeRelatedEvents(event: EventItem, allEvents: EventItem[]) {

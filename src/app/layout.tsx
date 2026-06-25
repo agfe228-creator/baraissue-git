@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MobileTabBar } from "@/components/MobileTabBar";
@@ -35,6 +36,13 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="ko">
       <body>
+        <Script
+          id="google-adsense"
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4558482087323814"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <Header />
         {children}
         <Footer />

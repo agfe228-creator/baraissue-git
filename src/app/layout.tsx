@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   },
   description: "전국 축제, 박람회, 전시회, 공연 일정을 한눈에 검색하고 확인하는 정보 포털입니다.",
   alternates: { canonical: "/" },
+  other: {
+    "google-adsense-account": "ca-pub-4558482087323814"
+  },
   openGraph: {
     title: SITE_NAME,
     description: "이번 주 가볼 만한 전국 행사를 축제바라에서 확인하세요.",

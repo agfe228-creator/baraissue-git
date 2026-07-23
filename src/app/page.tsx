@@ -4,6 +4,7 @@ import { OfficialGuideSection } from "@/components/OfficialGuideSection";
 import { SearchBox } from "@/components/SearchBox";
 import { categories, quickKeywords, regions, regionToSlug, statIcons } from "@/lib/constants";
 import { isVerifiedEvent, sortForPublicDisplay } from "@/lib/events";
+import { guidePosts } from "@/lib/guidePosts";
 import { getRuntimeEvents } from "@/lib/runtimeEvents";
 import Link from "next/link";
 
@@ -18,7 +19,7 @@ export default async function HomePage() {
   const latestEvents = displayEvents.slice(0, 8);
   const stats = [
     ["공식 출처", verifiedEvents.length ? `${verifiedEvents.length.toLocaleString()}개` : "검수중"],
-    ["방문 가이드", "6개"],
+    ["방문 가이드", `${guidePosts.length}개`],
     ["지역 탐색", "17개"]
   ];
 
@@ -33,7 +34,7 @@ export default async function HomePage() {
               <span className="text-bara-blue">전국 행사</span>
             </h1>
             <p className="mt-5 max-w-xl leading-7 text-slate-700">
-              공공데이터와 공개 안내를 바탕으로 전국 축제, 박람회, 전시회, 공연 일정을 정리합니다.
+              공공데이터와 공개 안내를 바탕으로 전국 축제, 박람회, 전시회, 공연 일정을 정리하고 방문자가 실제로 확인해야 할 교통·주차·우천 운영 기준을 함께 안내합니다.
             </p>
             <div className="mt-8 max-w-3xl">
               <SearchBox />
@@ -83,6 +84,20 @@ export default async function HomePage() {
               </Link>
             );
           })}
+        </div>
+      </section>
+
+      <section className="container-shell py-4">
+        <SectionTitle title="축제 방문 가이드" href="/posts" />
+        <div className="mt-4 grid gap-4 md:grid-cols-3">
+          {guidePosts.slice(0, 3).map((post) => (
+            <Link key={post.slug} href={`/posts/${post.slug}`} className="soft-card rounded-xl p-5 transition hover:-translate-y-0.5">
+              <p className="text-xs font-black text-bara-blue">{post.category} · {post.readTime}</p>
+              <h2 className="mt-2 text-lg font-black text-bara-text">{post.title}</h2>
+              <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-700">{post.summary}</p>
+              <p className="mt-4 text-sm font-black text-bara-blue">가이드 읽기 〉</p>
+            </Link>
+          ))}
         </div>
       </section>
 

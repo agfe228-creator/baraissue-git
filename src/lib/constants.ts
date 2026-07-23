@@ -51,6 +51,7 @@ export const months = Array.from({ length: 12 }, (_, index) => `${index + 1}월`
 
 export const navItems = [
   { label: "축제", href: "/festival" },
+  { label: "가이드", href: "/posts" },
   { label: "지역별", href: "/region/seoul" },
   { label: "월별", href: "/month/6" },
   { label: "출처정책", href: "/source-policy" }

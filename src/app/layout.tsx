@@ -11,17 +11,17 @@ export const runtime = "edge";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} - 전국 축제·박람회·전시회·공연 포털`,
+    default: `${SITE_NAME} - 전국 축제 방문 가이드`,
     template: `%s | ${SITE_NAME}`
   },
-  description: "전국 축제, 박람회, 전시회, 공연 일정을 한눈에 검색하고 확인하는 정보 포털입니다.",
+  description: "전국 축제 일정과 가족 나들이, 교통, 주차, 우천 대처, 공식 출처 확인 방법을 정리하는 축제 방문 가이드입니다.",
   alternates: { canonical: "/" },
   other: {
     "google-adsense-account": "ca-pub-4558482087323814"
   },
   openGraph: {
     title: SITE_NAME,
-    description: "이번 주 가볼 만한 전국 행사를 축제바라에서 확인하세요.",
+    description: "전국 축제 일정과 방문 전 확인할 교통, 주차, 요금, 우천 운영 정보를 정리합니다.",
     url: SITE_URL,
     siteName: SITE_NAME,
     locale: "ko_KR",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME,
-    description: "전국 행사 정보 포털"
+    description: "전국 축제 방문 가이드"
   }
 };
 

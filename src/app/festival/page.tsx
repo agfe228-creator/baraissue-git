@@ -10,17 +10,17 @@ export async function generateMetadata(): Promise<Metadata> {
   const events = await getRuntimeEvents();
   const hasVerifiedEvents = events.some(isVerifiedEvent);
   return {
-    title: "축제",
-    description: "전국 축제 일정을 지역과 월별로 확인하세요.",
+    title: "전국 축제",
+    description: "공식 출처와 이미지가 확인된 전국 축제 일정을 지역과 월별로 정리합니다.",
     alternates: { canonical: "/festival" },
     robots: hasVerifiedEvents ? { index: true, follow: true } : { index: false, follow: true },
-    openGraph: { title: "전국 축제 모음", description: "전국 축제 일정을 지역과 월별로 확인하세요." }
+    openGraph: { title: "전국 축제 모음", description: "공식 출처가 확인된 전국 축제 일정을 지역과 월별로 확인하세요." }
   };
 }
 
 export default async function FestivalPage() {
   const events = await getRuntimeEvents();
-  const verifiedEvents = events.filter(isVerifiedEvent);
+  const verifiedEvents = events.filter((event) => isVerifiedEvent(event) && (event.image || event.website));
   if (!verifiedEvents.length) {
     return (
       <>
@@ -51,7 +51,7 @@ export default async function FestivalPage() {
   }
   return (
     <>
-      <ListPage title="전국 축제 모음" description="공식 출처가 확인된 전국 축제 정보를 우선 정리합니다." baseEvents={verifiedEvents} fixedQuery={{ category: "축제" }} />
+      <ListPage title="전국 축제 모음" description="공식 출처와 이미지가 확인된 전국 축제 정보를 우선 정리합니다." baseEvents={verifiedEvents} fixedQuery={{ category: "축제" }} />
       <OfficialGuideSection title="축제 방문 전 체크리스트" />
     </>
   );

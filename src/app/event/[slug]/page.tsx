@@ -18,12 +18,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const event = await getRuntimeEvent(slug);
   if (!event) return {};
-  const verified = event.slug.startsWith("tourapi-");
+  const indexable = isIndexableEvent(event);
   return {
     title: event.title,
     description: event.description,
     alternates: { canonical: `/event/${event.slug}` },
-    robots: verified ? { index: true, follow: true } : { index: false, follow: true },
+    robots: indexable ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: {
       title: event.title,
       description: event.description,
@@ -160,6 +160,10 @@ function SourceValue({ event }: { event: EventItem }) {
 
 function hasReliableValue(value: string) {
   return Boolean(value && !value.includes("확인 필요") && !value.includes("공식 안내 확인"));
+}
+
+function isIndexableEvent(event: EventItem) {
+  return event.slug.startsWith("tourapi-") && Boolean(event.image) && Boolean(event.website) && event.description.length >= 500;
 }
 
 function getStructuredPrice(value: string) {

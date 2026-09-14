@@ -1,4 +1,4 @@
-import { BadgeCheck, CalendarDays, MapPin } from "lucide-react";
+import { CalendarDays, MapPin } from "lucide-react";
 import Link from "next/link";
 import { CategoryBadge, StatusBadge } from "@/components/Badge";
 import { FavoriteButton } from "@/components/FavoriteButton";
@@ -33,14 +33,10 @@ export function EventCard({ event, list = false }: { event: EventItem; list?: bo
             <MapPin size={15} />
             {event.region} · {event.venue}
           </p>
-          <p className="flex items-center gap-2 font-bold text-bara-text">
-            <BadgeCheck size={15} />
-            {event.admissionFee}
-          </p>
         </div>
       </div>
       <span className="mt-4 inline-flex h-9 items-center justify-center rounded-lg border border-bara-line px-3 text-sm font-bold text-bara-text transition group-hover:border-bara-blue group-hover:text-bara-blue">
-        자세히 보기
+        일정 확인하기
       </span>
     </Link>
   );

@@ -29,11 +29,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const region = slugToRegion(slug);
   return {
-    title: `${region} 행사`,
-    description: `${region}에서 열리는 축제, 박람회, 전시회, 공연 정보를 확인하세요.`,
+    title: `${region} 축제 찾기`,
+    description: `${region}에서 열리는 축제 정보를 사이트 안에서 확인하세요.`,
     alternates: { canonical: `/region/${slug}` },
-    robots: { index: true, follow: true },
-    openGraph: { title: `${region} 행사 | ${SITE_NAME}`, description: `${region} 지역 행사 정보` }
+    robots: { index: false, follow: true },
+    openGraph: { title: `${region} 축제 | ${SITE_NAME}`, description: `${region} 지역 축제 정보` }
   };
 }
 
@@ -43,10 +43,10 @@ export default async function RegionPage({ params }: { params: Promise<{ slug: s
   const events = await getRuntimeEvents();
   return (
     <>
-      <ListPage title={`${region} 행사 모음`} description={`${region}의 다양한 행사를 한눈에 확인해보세요.`} baseEvents={events} fixedQuery={{ region }} />
+      <ListPage title={`${region} 축제 찾기`} description={`${region}의 축제 정보를 한눈에 확인해보세요.`} baseEvents={events} fixedQuery={{ region }} />
       <section className="container-shell pb-8">
         <article className="rounded-xl border border-bara-line bg-white p-5 text-sm leading-7 text-slate-700 shadow-sm">
-          <h2 className="text-lg font-black text-bara-text">{region} 행사 방문 가이드</h2>
+          <h2 className="text-lg font-black text-bara-text">{region} 축제 방문 가이드</h2>
           <p className="mt-3">{regionGuides[region]}</p>
           <p className="mt-3">
             축제바라는 {region} 지역 행사를 주소 기준으로 분류하고, 일정·장소·문의처·공식 출처가 확인되는 정보를 우선 정리합니다.

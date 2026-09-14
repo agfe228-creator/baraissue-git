@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { regionToSlug, regions, SITE_URL } from "@/lib/constants";
+import { SITE_URL } from "@/lib/constants";
 import { guidePosts } from "@/lib/guidePosts";
 
 export const runtime = "edge";
@@ -7,22 +7,20 @@ export const runtime = "edge";
 const staticRoutes = [
   "",
   "/festival",
+  "/posts",
   "/about",
   "/contact",
   "/privacy",
   "/terms",
   "/source-policy",
-  "/policy",
-  "/posts"
+  "/policy"
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const regionRoutes = regions.map((region) => `/region/${regionToSlug(region)}`);
-  const monthRoutes = Array.from({ length: 12 }, (_, index) => `/month/${index + 1}`);
   const guideRoutes = guidePosts.map((post) => `/posts/${post.slug}`);
 
-  return [...staticRoutes, ...guideRoutes, ...regionRoutes, ...monthRoutes].map((route) => ({
+  return [...staticRoutes, ...guideRoutes].map((route) => ({
     url: `${SITE_URL}${route}`,
     lastModified: now,
     changeFrequency: route === "" ? "daily" : route.startsWith("/posts/") ? "monthly" : "weekly",
